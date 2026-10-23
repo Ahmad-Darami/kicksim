@@ -1,0 +1,17 @@
+import { sim, run, show, wait } from './test-sim.mjs';
+import { Sim, BALL_R } from './public/sim.js';
+run(1.0);
+sim.setBall(2.9, sim.pedestalTop + BALL_R + 0.01, 0); run(0.5);
+console.log('approach', JSON.stringify(await wait(sim.run({ type: 'approach_ball', side: 'r' })))); show('at pedestal');
+const bp = sim.ballState().p;
+console.log('reach', JSON.stringify(await wait(sim.run({ type: 'reach', side: 'r', target: [bp[0] - 0.02, bp[1] + 0.0, bp[2] + 0.0] }))));
+console.log('hand', sim.handTip('r').map((n) => n.toFixed(2)), 'ball', bp.map((n) => n.toFixed(2)));
+console.log('grab', JSON.stringify(await wait(sim.run({ type: 'grab', side: 'r' }))));
+console.log('lift', JSON.stringify(await wait(sim.run({ type: 'reach', side: 'r', target: [2.55, 1.2, 0.25] }))));
+console.log('relax', JSON.stringify(await wait(sim.run({ type: 'relax_arms', keep: true })))); console.log('back', JSON.stringify(await wait(sim.run({ type: 'walk_to', x: 1.5, z: -0.24, backward: true })))); show('holding'); console.log('state', sim.state().robot.tilt_deg, 'holding', sim.heldBy());
+const power = +process.argv[2] || 0.6, angle = +process.argv[3] || 40;
+sim.events.length = 0;
+console.log('throw', JSON.stringify(await wait(sim.run({ type: 'throw', power, angle }))));
+for (let i = 0; i < 480 * 6; i++) sim.step();
+console.log('events', JSON.stringify(sim.events.map((e) => ({ t: e.type, launch: e.launch && { speed: +e.launch.speed.toFixed(1), angle: +e.launch.angle_deg.toFixed(0) }, range: e.range_m && +e.range_m.toFixed(1), force: e.force_N }))));
+console.log('robot fallen?', sim.state().robot.fallen, 'tilt', sim.state().robot.tilt_deg);
