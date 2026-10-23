@@ -4,7 +4,7 @@
 //   {"action":"walk_to","x":-0.7,"z":0}      walk (metres; x forward, ball start is 0,0)
 //   {"action":"turn_to","degrees":30}        face a heading
 //   {"action":"wave"}
-//   {"action":"kick","speed":..,"angle":..,"azimuth":..,"backspin":..,"sidespin":..}
+//   {"action":"kick","power":0.6,"loft":25,"azimuth":0,"backspin":0,"sidespin":0}   (power = fraction of leg motor torque)
 // Wire these to your robot's SDK in a small bridge, or edit command() below to call the SDK directly.
 // The 3D robot in the page always mirrors the same commands, so it works with no hardware too.
 export const hasRobot = !!process.env.ROBOT_URL;

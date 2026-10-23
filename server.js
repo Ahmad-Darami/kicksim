@@ -17,12 +17,12 @@ Teach simple physics (speed, velocity, acceleration, gravity, projectile motion,
 Rules: keep replies to 2-4 short sentences (they are spoken aloud); no markdown, no emoji; use simple words; use real numbers from tool results; run one experiment at a time, ask the kid to predict before kicking when it makes sense; compare against the ideal_no_air_prediction when relevant.`;
 
 const tools = [
-  { name: 'kick', description: 'The robot walks behind the ball, kicks it, and waits until it first lands. Returns measured range, hang time, peak height, and the ideal no-air prediction.',
+  { name: 'kick', description: 'The robot walks behind the ball (wherever it is), swings its motorised leg and kicks, then waits until the ball lands. Launch speed is NOT chosen directly: it comes from the leg swing (motor torque, leg inertia, swing angle) and the collision. Returns the measured launch speed, range, hang time, peak height and the ideal no-air prediction.',
     input_schema: { type: 'object', properties: {
-      speed: { type: 'number', description: 'launch speed m/s (1-40)' }, angle: { type: 'number', description: 'launch angle above ground, degrees (0-90)' },
+      power: { type: 'number', description: 'fraction of leg motor torque, 0.05-1' }, loft: { type: 'number', description: 'foot tilt = launch angle, degrees 0-60' },
       azimuth: { type: 'number', description: 'left/right aim, degrees (-45..45)' }, backspin: { type: 'number', description: 'rev/s, negative = topspin' },
-      sidespin: { type: 'number', description: 'rev/s, curves the ball sideways' }, drag: { type: 'boolean', description: 'air resistance on/off for this kick' } },
-      required: ['speed', 'angle'] } },
+      sidespin: { type: 'number', description: 'rev/s, curves the ball sideways' }, drag: { type: 'boolean', description: 'air resistance on/off' } },
+      required: ['power', 'loft'] } },
   { name: 'walk_to', description: 'Walk the robot to a spot on the field. Metres: x is forward (the ball starts at 0,0), z is left/right.',
     input_schema: { type: 'object', properties: { x: { type: 'number' }, z: { type: 'number' } }, required: ['x', 'z'] } },
   { name: 'turn_to', description: 'Turn the robot to face a direction in degrees (0 = forward, positive = right).',
@@ -31,7 +31,7 @@ const tools = [
   { name: 'set_physics', description: 'Change the world. Use to compare e.g. Moon gravity (1.62) vs Earth (9.81).',
     input_schema: { type: 'object', properties: { gravity: { type: 'number' }, air_resistance: { type: 'boolean' }, bounciness: { type: 'number', description: '0-1' }, magnus_spin_effect: { type: 'boolean' } } } },
   { name: 'get_state', description: 'Current ball time, position, velocity, and settings.', input_schema: { type: 'object', properties: {} } },
-  { name: 'reset', description: 'Put the ball back at the start.', input_schema: { type: 'object', properties: {} } },
+  { name: 'reset', description: 'Put the ball and robot back at the start (ball at 0,0; robot at x=-4).', input_schema: { type: 'object', properties: {} } },
 ];
 
 let browser = null;

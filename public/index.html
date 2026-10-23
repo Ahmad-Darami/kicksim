@@ -9,14 +9,14 @@ body{margin:0;font-family:sans-serif;overflow:hidden}
 #log{flex:1;overflow:auto;font-size:13px}#log p{margin:4px 0}
 </style></head><body>
 <div id="ui">
-  <label>Speed <span id="v_speed"></span> m/s<input id="speed" type="range" min="1" max="40" value="20"></label>
-  <label>Angle <span id="v_angle"></span>°<input id="angle" type="range" min="0" max="90" value="45"></label>
+  <label>Kick power <span id="v_power"></span> %<input id="power" type="range" min="5" max="100" value="60"></label>
+  <label>Loft (foot tilt) <span id="v_loft"></span>°<input id="loft" type="range" min="0" max="60" value="25"></label>
   <label>Direction <span id="v_azimuth"></span>°<input id="azimuth" type="range" min="-45" max="45" value="0"></label>
   <label>Backspin <span id="v_backspin"></span> rev/s<input id="backspin" type="range" min="-10" max="10" value="0"></label>
   <label>Sidespin <span id="v_sidespin"></span> rev/s<input id="sidespin" type="range" min="-10" max="10" value="0"></label>
   <label>Gravity <span id="v_g"></span> m/s²<input id="g" type="range" min="1" max="25" step="0.1" value="9.81"></label>
   <label><input id="drag" type="checkbox" checked> Air resistance</label>
-  <button id="kick">Kick!</button> <button id="reset">Reset</button>
+  <button id="kick">Robot, kick!</button> <button id="reset">Reset</button>
   <div id="hud"></div>
 </div>
 <div id="chat"><div id="log"></div>

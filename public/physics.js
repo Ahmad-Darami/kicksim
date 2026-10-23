@@ -8,18 +8,26 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const rad = (d) => (d * Math.PI) / 180;
 
 export function makeBall(P = DEFAULTS) {
-  return { p: [0, P.r, 0], v: [0, 0, 0], w: [0, 0, 0], t: 0, maxH: P.r, landing: null, stopped: false };
+  return { p: [0, P.r, 0], v: [0, 0, 0], w: [0, 0, 0], t: 0, maxH: P.r, landing: null, stopped: false, o: [0, 0], flying: false };
 }
 
-// speed m/s, elevation & azimuth degrees, backspin/sidespin rev/s
+// spin (rev/s) about the lateral axis (backspin) and vertical axis (sidespin), relative to heading az (degrees)
+export function spinVector(azimuth, backspin = 0, sidespin = 0) {
+  const az = rad(azimuth), lat = [-Math.sin(az), 0, Math.cos(az)];
+  return add(mul(lat, backspin * 2 * Math.PI), [0, sidespin * 2 * Math.PI, 0]);
+}
+
+// Give the ball a velocity/spin from where it currently is; range is measured from here.
+export function launch(ball, v, w) {
+  ball.v = v; ball.w = w; ball.o = [ball.p[0], ball.p[2]];
+  ball.t = 0; ball.maxH = ball.p[1]; ball.landing = null; ball.stopped = false; ball.flying = true;
+}
+
+// speed m/s, elevation & azimuth degrees, backspin/sidespin rev/s (from the origin; used by tests)
 export function kick(ball, P, { speed, angle, azimuth = 0, backspin = 0, sidespin = 0 }) {
   const el = rad(angle), az = rad(azimuth);
-  const h = [Math.cos(az), 0, Math.sin(az)];
   ball.p = [0, P.r, 0];
-  ball.v = [speed * Math.cos(el) * h[0], speed * Math.sin(el), speed * Math.cos(el) * h[2]];
-  const lat = [-h[2], 0, h[0]];
-  ball.w = add(mul(lat, backspin * 2 * Math.PI), [0, sidespin * 2 * Math.PI, 0]);
-  ball.t = 0; ball.maxH = P.r; ball.landing = null; ball.stopped = false;
+  launch(ball, [speed * Math.cos(el) * Math.cos(az), speed * Math.sin(el), speed * Math.cos(el) * Math.sin(az)], spinVector(azimuth, backspin, sidespin));
 }
 
 export function step(b, P, dt) {
@@ -44,7 +52,7 @@ export function step(b, P, dt) {
     b.p[1] = P.r;
     const vn = b.v[1];
     if (vn < 0) {
-      if (!b.landing) b.landing = { time: b.t, x: b.p[0], z: b.p[2], range: Math.hypot(b.p[0], b.p[2]), maxHeight: b.maxH - P.r, impactSpeed: len(b.v) };
+      if (b.flying && !b.landing) b.landing = { time: b.t, x: b.p[0] - b.o[0], z: b.p[2] - b.o[1], range: Math.hypot(b.p[0] - b.o[0], b.p[2] - b.o[1]), maxHeight: b.maxH - P.r, impactSpeed: len(b.v) };
       const jn = vn < -0.6 ? -(1 + P.e) * vn : -vn; // slow impacts just rest
       b.v[1] = vn + jn;
       // friction at the contact point (rc = -r*y): couples spin and sliding
