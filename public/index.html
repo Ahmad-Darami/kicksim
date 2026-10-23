@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Kick Lab</title>
+<style>
+body{margin:0;font-family:sans-serif;overflow:hidden}
+#ui{position:fixed;top:0;left:0;background:#fffc;padding:8px;width:260px;font-size:13px}
+#ui label{display:block}#ui input[type=range]{width:100%}
+#hud{white-space:pre;font-family:monospace;margin-top:6px}
+#chat{position:fixed;right:0;top:0;bottom:0;width:300px;background:#fffc;padding:8px;display:flex;flex-direction:column}
+#log{flex:1;overflow:auto;font-size:13px}#log p{margin:4px 0}
+</style></head><body>
+<div id="ui">
+  <label>Speed <span id="v_speed"></span> m/s<input id="speed" type="range" min="1" max="40" value="20"></label>
+  <label>Angle <span id="v_angle"></span>°<input id="angle" type="range" min="0" max="90" value="45"></label>
+  <label>Direction <span id="v_azimuth"></span>°<input id="azimuth" type="range" min="-45" max="45" value="0"></label>
+  <label>Backspin <span id="v_backspin"></span> rev/s<input id="backspin" type="range" min="-10" max="10" value="0"></label>
+  <label>Sidespin <span id="v_sidespin"></span> rev/s<input id="sidespin" type="range" min="-10" max="10" value="0"></label>
+  <label>Gravity <span id="v_g"></span> m/s²<input id="g" type="range" min="1" max="25" step="0.1" value="9.81"></label>
+  <label><input id="drag" type="checkbox" checked> Air resistance</label>
+  <button id="kick">Kick!</button> <button id="reset">Reset</button>
+  <div id="hud"></div>
+</div>
+<div id="chat"><div id="log"></div>
+  <form id="f"><input id="msg" style="width:75%" placeholder="Tell the robot..."><button>Send</button></form></div>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+<script type="module" src="main.js"></script>
+</body></html>
